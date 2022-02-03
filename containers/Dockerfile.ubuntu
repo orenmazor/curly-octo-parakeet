@@ -1,0 +1,24 @@
+FROM ubuntu:21.10
+
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install gpg gpg-agent john cowsay openssh-server -y --no-install-recommends
+RUN useradd -m -p asdfasdf -s /bin/bash nextpuzzle
+# /* RUN echo "nextpuzzle:jodyheavener.github.io" | chpasswd  */
+RUN echo "nextpuzzle:good-luck" | chpasswd 
+
+# this is the user we will ssh with
+RUN useradd -m -p foo -s /bin/bash john-ripper
+RUN echo "john-ripper:hacker" | chpasswd
+
+RUN service ssh start
+RUN chmod 777 /etc/shadow
+RUN rm /etc/update-motd.d/*
+COPY nextpuzzle.url.gpg /home/nextpuzzle/
+
+RUN echo "echo \"I heard it told that rainbow tables and wordlists are cooler than bruteforce, and there's gotta be one around here somewhere, but I'm just a kickass cow. Sup.\" | cowsay" >> /home/john-ripper/.profile
+RUN echo "echo \"I heard re-using the same password for all of your things is bad, but I'm just a kickass cow. Sup.\" | cowsay" >> /home/nextpuzzle/.profile
+
+RUN echo "rm -rf /home/john-ripper/.john" >> /home/john-ripper/.bash_logout
+
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd","-D"]
