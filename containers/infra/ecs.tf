@@ -23,14 +23,6 @@ resource "aws_ecs_task_definition" "task" {
           hostPort      = 22
         }
       ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          "awslogs-group"         = "ctf",
-          "awslogs-stream-prefix" = "ctf"
-          "awslogs-region"        = "ca-central-1"
-        }
-      }
     }
   ])
 }
@@ -43,7 +35,7 @@ resource "aws_ecs_service" "ctf" {
   name            = "ctf"
   cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.task.arn
-  desired_count   = 25
+  desired_count   = 1
   # iam_role        = aws_iam_role.ctf.arn
   launch_type = "FARGATE"
 
